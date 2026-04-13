@@ -29,20 +29,20 @@ function startCountdown() {
             const timeRemaining = matchStartDate - now;
             const timeToEnd = matchEndDate - now;
             if (timeToEnd <= 0) {
-                hereElement.textContent = "Match End";
-                statusElement.textContent = "End";
+                hereElement.textContent = "إنتهت المباراة";
+                statusElement.textContent = "إنتهت";
                 clearInterval(interval);
                 match.classList.add("END");
             } else if (timeRemaining <= 0 && timeToEnd > 0) {
-                hereElement.textContent = "Watch Now";
-                statusElement.textContent = "Live Now";
+                hereElement.textContent = "شاهدها الآن";
+                statusElement.textContent = "جارية الآن";
                 match.classList.add("LIVE");
             } else if (timeRemaining <= 30 * 60 * 1000) {
                 const minutesRemaining = Math.floor(timeRemaining / (1000 * 60));
-                statusElement.textContent = "Soon";
+                statusElement.textContent = "تبداء قريباً";
                 countdownElement.textContent = `${minutesRemaining} دقيقة`;
                 match.classList.add("SOON");
-                hereElement.textContent = "Soon";
+                hereElement.textContent = "تبداء قريباً";
             } else {
                 const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
                 const hours = Math.floor(
@@ -62,9 +62,9 @@ function startCountdown() {
                 countdownText += `${minutes.toString().padStart(2, "0")}:${seconds
                     .toString()
                     .padStart(2, "0")}`;
-                hereElement.textContent = "Not Started";
+                hereElement.textContent = "لم تبداء";
                 countdownElement.textContent = countdownText;
-                statusElement.textContent = "Not Started Yet";
+                statusElement.textContent = "لم تبداء بعد";
                 match.classList.add("NOT");
             }
         }, 100);
