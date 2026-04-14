@@ -5,6 +5,12 @@
 ~> Developer By      : STING WEB - Facebook Page   : ->  https://www.facebook.com/stingweb.eg
 ~> Desgin URL        : https://www.sting-web.com
 =========== [ STING WEB ] ==========*/
+
+// ============================================
+// إعدادات التوقيت - غير هنا timezone الموقع
+// ============================================
+const SITE_TIMEZONE_OFFSET = -3; // توقيت القاهرة (UTC+3) - عدد الساعات
+
 function startCountdown() {
     const matches = document.querySelectorAll(".STING-WEB-Match");
     
@@ -17,23 +23,33 @@ function startCountdown() {
         const matchStartTime = countdownElement.getAttribute("data-start");
         const matchEndTime = countdownElement.getAttribute("data-end");
         
-        // تحويل وقت بداية ونهاية المباراة للتوقيت المحلي للجهاز
+        // تحويل وقت المباراة لكائن Date
         const matchStartDate = new Date(matchStartTime);
         const matchEndDate = new Date(matchEndTime);
         
-        // عرض الوقت المحلي للمباراة
-        timeElement.textContent = matchStartDate.toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-        });
+        // ============================================
+        // حساب الوقت الحالي بتوقيت الموقع (مش الجهاز)
+        // ============================================
+        const now = new Date();
+        const siteNow = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (SITE_TIMEZONE_OFFSET * 3600000));
+        
+        // عرض وقت المباراة بتوقيت الموقع (12 ساعة)
+        let hours = matchStartDate.getHours();
+        const minutes = matchStartDate.getMinutes().toString().padStart(2, "0");
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        hours = hours.toString().padStart(2, "0");
+        timeElement.textContent = `${hours}:${minutes} ${ampm}`;
         
         const interval = setInterval(() => {
-            const now = new Date();
+            // تحديث الوقت الحالي بتوقيت الموقع
+            const currentNow = new Date();
+            const currentSiteNow = new Date(currentNow.getTime() + (currentNow.getTimezoneOffset() * 60000) + (SITE_TIMEZONE_OFFSET * 3600000));
             
-            // حساب الفرق بين وقت المباراة (المحول للتوقيت المحلي) والوقت الحالي
-            const timeRemaining = matchStartDate - now;
-            const timeToEnd = matchEndDate - now;
+            // حساب الفرق بين وقت المباراة ووقت الموقع الحالي
+            const timeRemaining = matchStartDate - currentSiteNow;
+            const timeToEnd = matchEndDate - currentSiteNow;
             
             if (timeToEnd <= 0) {
                 hereElement.textContent = "إنتهت المباراة";
@@ -132,7 +148,7 @@ function displayMatches(matches, view) {
                                 <div class="STING-WEB-Center">
                                     <div class="STING-WEB-Result">${match['Team-Right'].Goal}</div>
                                     <div class="STING-WEB-Match-Bio">
-                                        <div class="STING-WEB-TimeZone">Your device time</div>
+                                        <div class="STING-WEB-TimeZone">بتوقيت القاهرة</div>
                                         <div class="STING-WEB-Time"></div>
                                         <div class="STING-WEB-Status"></div>
                                         <div class="STING-WEB-Time-Descending" data-start="${match['Time-Start']}" data-end="${match['Time-End']}"></div>
